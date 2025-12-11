@@ -23,6 +23,18 @@
         <div id="unity-build-title">WEbGL</div>
       </div>
     </div>
+    <video id="qrPreview" autoplay playsinline style="
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 200px;
+    height: 200px;
+    background: #000;
+    border-radius: 10px;
+    display: none;
+    z-index: 9999;
+    "></video>
+
     <script>
 
       var container = document.querySelector("#unity-container");
@@ -59,9 +71,9 @@
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/Build.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Build.data.br",
-        frameworkUrl: buildUrl + "/Build.framework.js.br",
-        codeUrl: buildUrl + "/Build.wasm.br",
+        dataUrl: buildUrl + "/Build.data",
+        frameworkUrl: buildUrl + "/Build.framework.js",
+        codeUrl: buildUrl + "/Build.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "WEbGL",
@@ -125,6 +137,33 @@
             };
 
       document.body.appendChild(script);
+    
+      
+    let stream = null;
+
+    function startCameraPreview() {
+        const video = document.getElementById("qrPreview");
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(s => {
+                stream = s;
+                video.srcObject = stream;
+                video.style.display = "block";
+            })
+            .catch(err => {
+                console.error("Camera error:", err);
+            });
+    }
+
+    function stopCameraPreview() {
+        const video = document.getElementById("qrPreview");
+        video.style.display = "none";
+
+        if (stream) {
+            stream.getTracks().forEach(t => t.stop());
+            stream = null;
+        }
+    }
 
     </script>
   </body>
